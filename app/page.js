@@ -18,15 +18,20 @@ export default function Home() {
       rec.lang = 'pa-IN'; // Panjabi language support
 
       rec.onresult = (event) => {
-        let currentTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            setText((prev) => prev + event.results[i][0].transcript + ' ');
-          } else {
-            currentTranscript += event.results[i][0].transcript;
-          }
-        }
-      };
+  let finalTranscript = '';
+  
+  // Loop through all results generated so far in this session
+  for (let i = 0; i < event.results.length; ++i) {
+    if (event.results[i].isFinal) {
+      finalTranscript += event.results[i][0].transcript + ' ';
+    }
+  }
+
+  // Mobile duplication nu rokਣ layi direct final transcript update kr rhe han
+  if (finalTranscript) {
+    setText(finalTranscript);
+  }
+};
 
       rec.onerror = (e) => {
         console.error(e);
