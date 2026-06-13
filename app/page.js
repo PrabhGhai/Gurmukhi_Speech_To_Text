@@ -18,18 +18,27 @@ export default function Home() {
       rec.lang = 'pa-IN'; // Panjabi language support
 
       rec.onresult = (event) => {
-  let finalTranscript = '';
+  let speechText = '';
   
-  // Loop through all results generated so far in this session
-  for (let i = 0; i < event.results.length; ++i) {
+  for (let i = event.resultIndex; i < event.results.length; ++i) {
     if (event.results[i].isFinal) {
-      finalTranscript += event.results[i][0].transcript + ' ';
+      speechText += event.results[i][0].transcript + ' ';
     }
   }
 
-  // Mobile duplication nu rokਣ layi direct final transcript update kr rhe han
-  if (finalTranscript) {
-    setText(finalTranscript);
+  if (speechText.trim()) {
+    setText((prevText) => {
+      
+      const oldWords = prevText.trim().split(/\s+/);
+      const newWords = speechText.trim().split(/\s+/);
+      
+      const combinedWords = [...oldWords, ...newWords];
+      const uniqueWords = combinedWords.filter((word, index) => {
+        return combinedWords.indexOf(word) === index && word !== '';
+      });
+
+      return uniqueWords.join(' ') + ' ';
+    });
   }
 };
 
